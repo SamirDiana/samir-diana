@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Samir & Diana's Wedding</title>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&amp;family=Playfair+Display&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Allura&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Allura&amp;family=Playfair+Display:wght@400;500&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    h1, h2, h3, .agenda-item, a {
+      font-family: 'Great Vibes', cursive;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    }
+
+    .agenda-item::before {
+      margin-right: 8px;
+      font-size: 1.2em;
+    }
+    section {
+      backdrop-filter: blur(1px);
+    }
+    .agenda-item, .agenda-item a {
+      font-size: 1.5em;
+    }
+    .background-slideshow .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6); /* lighter overlay */
+      z-index: 1;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Try to maintain audio continuity when coming from index page
+    const audio = document.getElementById('wedding-audio');
+    if (audio.paused) {
+      audio.volume = 0.5;
+      audio.play().catch(error => {
+        console.log("Autoplay prevented:", error);
+      });
+    }
+  });
+</script>
+<body>
+  <!-- Background Slideshow -->
+  <div class="background-slideshow">
+    <div class="overlay"></div>
+    <img src="bride_groom1.png" class="active" alt="Bride and Groom 1" />
+    <img src="bride_groom2.png" alt="Bride and Groom 2" />
+  </div>
+
+  <!-- Music -->
+  <audio id="wedding-audio" loop>
+  <source src="calm-music.mp3" type="audio/mpeg" />
+  Your browser does not support the audio element.
+</audio>
+
+
+
+  <!-- Main Section -->
+  <div class="snap-container">
+  <section>
+    <p class="bible-verse">
+    “أَمَّا أَنَا فَكَزَيْتُونَةٍ خَضْرَاءَ فِي بَيْتِ الله”<br>— مزمور 52: 8
+    </p>
+    <h1>Samir & Diana</h1>
+    <h3>Are Getting Married</h3>
+    <p class="scroll-indicator">Scroll down to discover more</p>
+  </section>
+
+  <!-- Hour and Location Section -->
+  <!-- New When & Where Section -->
+  <!-- Update your When & Where section to this -->
+<section>
+  <div class="when-where-container">
+    <div class="celebration-image-container">
+      <img src="celebration-cropped.png" alt="Wedding time" class="celebration-image">
+    </div>
+    
+    <div class="location-card">
+      <div class="venue-name">مار سمعان العمودي</div>
+      <div class="venue-address"> القليعات</div>
+      <a href="https://maps.app.goo.gl/RBzVHow284QuHXag6?g_st=aw" class="map-button">
+        📍 Church Location
+      </a>
+    </div>
+    
+    <div class="dinner-label">سيقام حفل العشاء في</div>
+    
+    <div class="location-card">
+      <div class="venue-name">مطعم اديب بالاس</div>
+      <div class="venue-address">القليعات</div>
+      <a href="https://maps.app.goo.gl/NEV1ytB1vrKYcdREA" class="map-button">
+        📍 Venue Location
+      </a>
+    </div>
+    
+    <p class="scroll-indicator">Scroll down to see the agenda</p>
+  </div>
+</section>
+
+  <!-- Agenda Section -->
+  <!-- Update your Agenda section to this -->
+<section class="agenda-section">
+  <div class="agenda-image-container">
+    <img src="Timeline.png" alt="Wedding Agenda" class="agenda-image">
+  </div>
+  <p class="scroll-indicator">Scroll down to view the gift registry</p>
+</section>
+
+  <!-- Gift Registry Section -->
+  <section>
+    <h2>Gift Registry</h2>
+    <p class="agenda-item">Your presence is our biggest gift!<br> If you wish to celebrate our special day with a gift, a wedding list is available</p>
+    <ul>
+      <div class="agenda-item"> <a href="#" target="_blank">Whish Money</a></div>
+      <div class="agenda-item"> 20230917-03</div>
+    </ul>
+    <p class="scroll-indicator">Scroll down to contact us</p>
+  </section>
+
+  <!-- Contact Section -->
+  <!-- Update your contact section to this -->
+<section>
+  <div class="contact-container">
+    <h2 class="section-title">Be Our Guest</h2>
+    <p class="rsvp-note">Please respond before August 5, 2025</p>
+
+  
+  <!-- RSVP Form - Sends to WhatsApp -->
+  <form id="rsvpForm" class="rsvp-form">
+      <label for="fullname">Full Name</label>
+      <input type="text" id="fullname" name="fullname" required placeholder="Full Name">
+    
+      <label for="attending">Are you attending?</label>
+      <select id="attending" name="attending" required>
+        <option value="">Select an option</option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+      </select>
+    
+      <label for="number">Number of attendees</label>
+      <select id="number" name="number">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+    
+      <label for="attendees">Attendees' names</label>
+      <input type="text" id="attendees" name="attendees" placeholder="Attendees' names">
+    
+      <label for="message">Leave a message</label>
+      <textarea id="message" name="message" rows="3" placeholder="Your message..."></textarea>
+    
+      <button type="submit" class="submit-button"><i class="fab fa-whatsapp"></i> Send RSVP via WhatsApp</button>
+    </form>
+  </div>
+</section>
+  </div>
+  
+
+  <script>
+    const images = document.querySelectorAll('.background-slideshow img');
+    let index = 0;
+
+    setInterval(() => {
+      images[index].classList.remove('active');
+      index = (index + 1) % images.length;
+      images[index].classList.add('active');
+    }, 8000);
+  </script>
+  <!-- Form submission - sends to WhatsApp -->
+  <script>
+  document.getElementById('rsvpForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const button = form.querySelector('.submit-button');
+    
+    // Get form values
+    const fullname = document.getElementById('fullname').value;
+    const attending = document.getElementById('attending').value;
+    const number = document.getElementById('number').value;
+    const attendees = document.getElementById('attendees').value;
+    const message = document.getElementById('message').value;
+    
+    // Format message for WhatsApp
+    const whatsappMessage = `Hi Samir & Diana, I'm responding to your wedding invitation!
+    
+Name: ${fullname}
+Attending: ${attending}
+Number of attendees: ${number}
+Attendees: ${attendees || 'N/A'}
+Message: ${message || 'No message'}`;
+    
+    // Encode message for URL
+    const encodedMessage = encodeURIComponent(whatsappMessage);
+    
+    // Show loading state
+    button.disabled = true;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Opening WhatsApp...';
+    
+    // Open WhatsApp with formatted message
+    setTimeout(() => {
+      window.open(`https://wa.me/96171028637?text=${encodedMessage}`, '_blank');
+      
+      // Reset button after opening
+      button.disabled = false;
+      button.innerHTML = '<i class="fab fa-whatsapp"></i> Send RSVP via WhatsApp';
+    }, 300);
+  });
+  </script>
+</body>
+
+<!-- Mirrored from joemarianewedding.github.io/ourwedding/main.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 25 May 2026 11:25:08 GMT -->
+</html>
