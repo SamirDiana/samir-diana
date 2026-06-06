@@ -106,10 +106,27 @@
       </a>
     </div>
     
-    <p class="scroll-indicator">Scroll down to see the agenda</p>
+    <p class="scroll-indicator">Scroll down to see the the gift registry</p>
   </div>
 </section>
 
+  <!-- Gift Registry Section -->
+  <section>
+    <h2>لمن يرغب، لائحة الهدايا</h2>
+    <ul>
+      <div class="agenda-item"> <a href="#" target="_blank">Whish Money</a></div>
+      <div class="agenda-item">31428144</div>
+    </ul>
+    <div class="contact-container contact-in-gift">
+      <h2>حضوركم يزيد فرحتنا وصلاتكم تُثبّت حبّنا</h2>
+      <p class="rsvp-note">يرجى تأكيد الحضور قبل 5 تموز</p>
+      <div class="phone-list">
+        <p><a class="map-button" href="https://wa.me/96103433668" target="_blank" rel="noopener noreferrer">03/سمير حداد 433668</a></p>
+        <p><a class="map-button" href="https://wa.me/9617027778" target="_blank" rel="noopener noreferrer">70/ديانا نصّار 27778</a></p>
+      </div>
+    </div>
+  </section>
+  
   <!-- Agenda Section -->
   <!-- Update your Agenda section to this -->
 <section class="agenda-section">
@@ -119,31 +136,6 @@
   <p class="scroll-indicator">Scroll down to view the gift registry</p>
 </section>
 
-  <!-- Gift Registry Section -->
-  <section>
-    <h2>ﻟﻤﻦ ﻳﺮﻏﺐ، ﻻﺋﺤﺔ اﻟﻬﺪاﻳﺎ</h2>
-    <ul>
-      <div class="agenda-item"> <a href="#" target="_blank">Whish Money</a></div>
-      <div class="agenda-item">31428144</div>
-    </ul>
-  </section>
-
-  <!-- Contact Section -->
-  <!-- Update your contact section to this -->
-<section>
-  <div class="contact-container">
-  <!--  <h2 class="section-title">Be Our Guest</h2> -->
-    <p class="rsvp-note">ﻳﺮﺟﻰ ﺗﺄﻛﻴﺪ اﻟﺤﻀﻮر ﻗﺒﻞ 5 ﺗﻤﻮ
-ز</p>
-
-  
-      
-      <button type="submit" class="submit-button"><i class="fab fa-whatsapp"></i> Send RSVP via WhatsApp</button>
-    </form>
-  </div>
-</section>
-  </div>
-  
 
   <script>
     const images = document.querySelectorAll('.background-slideshow img');
@@ -154,46 +146,6 @@
       index = (index + 1) % images.length;
       images[index].classList.add('active');
     }, 8000);
-  </script>
-  <!-- Form submission - sends to WhatsApp -->
-  <script>
-  document.getElementById('rsvpForm').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const form = e.target;
-    const button = form.querySelector('.submit-button');
-    
-    // Get form values
-    const fullname = document.getElementById('fullname').value;
-    const attending = document.getElementById('attending').value;
-    const number = document.getElementById('number').value;
-    const attendees = document.getElementById('attendees').value;
-    const message = document.getElementById('message').value;
-    
-    // Format message for WhatsApp
-    const whatsappMessage = `Hi Samir & Diana, I'm responding to your wedding invitation!
-    
-Name: ${fullname}
-Attending: ${attending}
-Number of attendees: ${number}
-Attendees: ${attendees || 'N/A'}
-Message: ${message || 'No message'}`;
-    
-    // Encode message for URL
-    const encodedMessage = encodeURIComponent(whatsappMessage);
-    
-    // Show loading state
-    button.disabled = true;
-    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Opening WhatsApp...';
-    
-    // Open WhatsApp with formatted message
-    setTimeout(() => {
-      window.open(`https://wa.me/96103433668?text=${encodedMessage}`, '_blank');
-      
-      // Reset button after opening
-      button.disabled = false;
-      button.innerHTML = '<i class="fab fa-whatsapp"></i> Send RSVP via WhatsApp';
-    }, 300);
-  });
   </script>
 </body>
 
