@@ -38,32 +38,12 @@
       pointer-events: none;
     }
 
-    .audio-button {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      z-index: 22;
-      padding: 0.85rem 1.25rem;
-      border: 1px solid rgba(255,255,255,0.85);
-      border-radius: 999px;
-      background: rgba(0,0,0,0.6);
-      color: #fff;
-      font-family: 'Playfair Display', serif;
-      font-size: 0.95rem;
-      cursor: pointer;
-      backdrop-filter: blur(10px);
-    }
-
-    .audio-button:hover {
-      background: rgba(255,255,255,0.12);
-    }
   </style>
 </head>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     // Try to maintain audio continuity when coming from index page
     const audio = document.getElementById('wedding-audio');
-    const playButton = document.getElementById('play-music');
     const startSecond = 45;
 
     function startMusic() {
@@ -74,11 +54,7 @@
         }
         const playPromise = audio.play();
         if (playPromise && typeof playPromise.then === 'function') {
-          playPromise.then(() => {
-            if (playButton) {
-              playButton.style.display = 'none';
-            }
-          }).catch(error => {
+          playPromise.catch(error => {
             console.log('Autoplay prevented:', error);
           });
         }
@@ -87,11 +63,24 @@
       }
     }
 
-    if (playButton) {
-      playButton.addEventListener('click', () => {
-        startMusic();
-      });
+    function handleFirstInteraction() {
+      startMusic();
+      document.removeEventListener('click', handleFirstInteraction);
+      document.removeEventListener('touchstart', handleFirstInteraction);
+      document.removeEventListener('touchmove', handleFirstInteraction);
+      document.removeEventListener('pointerdown', handleFirstInteraction);
+      document.removeEventListener('pointermove', handleFirstInteraction);
+      document.removeEventListener('mousedown', handleFirstInteraction);
+      document.removeEventListener('mousemove', handleFirstInteraction);
     }
+
+    document.addEventListener('click', handleFirstInteraction, { once: true, passive: true });
+    document.addEventListener('touchstart', handleFirstInteraction, { once: true, passive: true });
+    document.addEventListener('touchmove', handleFirstInteraction, { once: true, passive: true });
+    document.addEventListener('pointerdown', handleFirstInteraction, { once: true, passive: true });
+    document.addEventListener('pointermove', handleFirstInteraction, { once: true, passive: true });
+    document.addEventListener('mousedown', handleFirstInteraction, { once: true, passive: true });
+    document.addEventListener('mousemove', handleFirstInteraction, { once: true, passive: true });
 
     if (audio) {
       if (audio.readyState >= 1 && !isNaN(audio.duration)) {
@@ -125,7 +114,6 @@
   <source src="calm-music.mp3" type="audio/mpeg" />
   Your browser does not support the audio element.
 </audio>
-  <button id="play-music" class="audio-button" type="button">تشغيل الموسيقة</button>
 
   <!-- Main Section -->
   <div class="snap-container">
