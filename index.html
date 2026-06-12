@@ -129,13 +129,6 @@
     const audio = document.getElementById('wedding-audio');
     if (audio) {
       audio.volume = 0.5;
-      try {
-        if (!isNaN(audio.duration) && audio.duration > 45) {
-          audio.currentTime = 45;
-        }
-      } catch (e) {
-        // ignore if seeking is not yet allowed
-      }
       audio.play().catch(() => {});
     }
     window.location.href = "main.html";

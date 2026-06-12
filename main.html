@@ -47,25 +47,11 @@
   document.addEventListener('DOMContentLoaded', () => {
     // Try to maintain audio continuity when coming from index page
     const audio = document.getElementById('wedding-audio');
-    const startSecond = 45;
     let audioCtx = null;
-    let hasSeeked = false;
     let hasGesture = false;
 
     function showAudioFallback() {}
     function hideAudioFallback() {}
-
-    function seekToStart() {
-      if (!audio || hasSeeked) return;
-      if (!isNaN(audio.duration) && audio.duration > startSecond) {
-        try {
-          audio.currentTime = startSecond;
-          hasSeeked = true;
-        } catch (e) {
-          // ignore if seeking is not yet allowed
-        }
-      }
-    }
 
     function createAudioContextIfAllowed() {
       if (!audio || audioCtx || !hasGesture) return;
@@ -96,9 +82,6 @@
       audio.muted = false;
       audio.volume = 0.5;
       createAudioContextIfAllowed();
-      if (!hasSeeked) {
-        seekToStart();
-      }
       audio.play().catch(() => {});
     }
 
@@ -106,15 +89,6 @@
       try {
         if (!audio) return Promise.reject(new Error('No audio element'));
         audio.volume = 0.5;
-
-        // Seek only once, and only when metadata is available.
-        if (!hasSeeked && audio.readyState >= 1) {
-          seekToStart();
-        }
-
-        if (!hasSeeked) {
-          audio.addEventListener('loadedmetadata', seekToStart, { once: true });
-        }
 
         if (hasGesture) {
           createAudioContextIfAllowed();
@@ -168,7 +142,6 @@
     document.addEventListener('keydown', handleFirstInteraction, { once: true, passive: true });
 
     if (audio) {
-      audio.muted = true;
       // Aggressive autoplay attempts
       const tryAutoplay = () => {
         startMusic();
@@ -201,7 +174,7 @@
   </div>
 
   <!-- Music -->
-  <audio id="wedding-audio" loop autoplay muted playsinline preload="auto">
+  <audio id="wedding-audio" loop autoplay playsinline preload="auto">
   <source src="calm-music.mp3" type="audio/mpeg" />
   Your browser does not support the audio element.
 </audio>
