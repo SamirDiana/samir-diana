@@ -37,42 +37,73 @@
       z-index: 1;
       pointer-events: none;
     }
+
+    .audio-button {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 22;
+      padding: 0.85rem 1.25rem;
+      border: 1px solid rgba(255,255,255,0.85);
+      border-radius: 999px;
+      background: rgba(0,0,0,0.6);
+      color: #fff;
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+    }
+
+    .audio-button:hover {
+      background: rgba(255,255,255,0.12);
+    }
   </style>
 </head>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     // Try to maintain audio continuity when coming from index page
     const audio = document.getElementById('wedding-audio');
-    // Start playback at 23 seconds when possible
-    function startAt23() {
+    const playButton = document.getElementById('play-music');
+    const startSecond = 45;
+
+    function startMusic() {
       try {
         audio.volume = 0.5;
-        // only seek if duration is known and long enough
-        if (!isNaN(audio.duration) && audio.duration > 45) {
-          audio.currentTime = 45;
+        if (!isNaN(audio.duration) && audio.duration > startSecond) {
+          audio.currentTime = startSecond;
         }
-        audio.play().catch(error => {
-          console.log('Autoplay prevented:', error);
-        });
+        const playPromise = audio.play();
+        if (playPromise && typeof playPromise.then === 'function') {
+          playPromise.then(() => {
+            if (playButton) {
+              playButton.style.display = 'none';
+            }
+          }).catch(error => {
+            console.log('Autoplay prevented:', error);
+          });
+        }
       } catch (e) {
         console.log('Audio start error:', e);
       }
     }
 
+    if (playButton) {
+      playButton.addEventListener('click', () => {
+        startMusic();
+      });
+    }
+
     if (audio) {
-      // If metadata is already loaded, start immediately
       if (audio.readyState >= 1 && !isNaN(audio.duration)) {
-        startAt23();
+        startMusic();
       } else {
-        // Wait for metadata so seeking is allowed
         const onLoaded = () => {
-          startAt23();
+          startMusic();
           audio.removeEventListener('loadedmetadata', onLoaded);
         };
         audio.addEventListener('loadedmetadata', onLoaded);
-        // Also try when canplay as a fallback
         const onCanPlay = () => {
-          startAt23();
+          startMusic();
           audio.removeEventListener('canplay', onCanPlay);
         };
         audio.addEventListener('canplay', onCanPlay);
@@ -90,12 +121,11 @@
   </div>
 
   <!-- Music -->
-  <audio id="wedding-audio" loop>
+  <audio id="wedding-audio" loop autoplay playsinline preload="auto">
   <source src="calm-music.mp3" type="audio/mpeg" />
   Your browser does not support the audio element.
 </audio>
-
-
+  <button id="play-music" class="audio-button" type="button">تشغيل الموسيقة</button>
 
   <!-- Main Section -->
   <div class="snap-container">
