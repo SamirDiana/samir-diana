@@ -209,6 +209,7 @@ h3 {
   background-color: transparent;
   font-family: sans-serif;
   transition: background-color 0.3s ease;
+  touch-action: manipulation;
 }
 
 .map-button:hover {
@@ -401,6 +402,7 @@ a:hover {
   animation: pulse 2s infinite;
   padding-bottom: env(safe-area-inset-bottom);
   z-index: 10;
+  pointer-events: none;
 }
 
 section:first-of-type .scroll-indicator {
@@ -544,6 +546,7 @@ section:first-of-type .scroll-indicator {
   margin: 1rem auto 1.5rem;
   display: grid;
   gap: 0.9rem;
+  direction: rtl;
   text-align: right;
 }
 
@@ -564,10 +567,13 @@ section:first-of-type .scroll-indicator {
   color: #fff;
   font-size: 1rem;
   outline: none;
+  direction: rtl;
+  text-align: right;
 }
 
 .rsvp-form input::placeholder {
   color: rgba(255, 255, 255, 0.7);
+  text-align: right;
 }
 
 .rsvp-form input:focus {
@@ -579,6 +585,7 @@ section:first-of-type .scroll-indicator {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.75rem;
+  justify-items: end;
 }
 
 .rsvp-actions .map-button {
@@ -586,37 +593,6 @@ section:first-of-type .scroll-indicator {
   justify-content: center;
   padding: 0.95rem 1.1rem;
   border-radius: 30px;
-}
-
-  opacity: 0.85;
-}
-
-.rsvp-form {
-  flex: 1; /* Take remaining space */
-  display: flex;
-  flex-direction: column;
-  justify-content: center; /* Center form vertically */
-  gap: 0.8rem; /* Reduced gap */
-}
-
-.rsvp-form label {
-  font-family: 'Playfair Display', serif;
-  font-weight: 500;
-  font-size: 1rem;
-}
-
-.rsvp-form input[type="text"],
-.rsvp-form select,
-.rsvp-form textarea {
-  padding: 0.5rem 0.8rem;
-  border-radius: 8px;
-  border: none;
-  font-size: 0.9rem;
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255,255,255,0.2);
-  width: 100%;
 }
 
 .rsvp-form input::placeholder,
