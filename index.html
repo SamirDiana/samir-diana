@@ -132,6 +132,13 @@
   function startSite() {
     const audio = document.getElementById('wedding-audio');
     audio.volume = 0.5;
+    if (!isNaN(audio.duration) && audio.duration > 45) {
+      try {
+        audio.currentTime = 45;
+      } catch (e) {
+        // ignore if seeking is not yet allowed
+      }
+    }
     audio.play().then(() => {
       window.location.href = "main.html";
     }).catch(error => {

@@ -9,7 +9,9 @@ html, body {
   font-family: 'Playfair Display', serif;
   color: #fff;
   background: #000;
-  overflow-x: hidden;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
   scroll-behavior: smooth;
   position: relative;
   z-index: 1;
@@ -483,15 +485,6 @@ section:first-of-type .scroll-indicator {
   opacity: 1;
 }
 
-@media (max-height: 500px) {
-  .snap-container {
-    scroll-snap-type: none;
-    height: auto;
-    overflow-y: auto;
-    overflow-x: hidden;
-  }
-}
-
 .contact-container {
   width: 100%;
   max-width: 600px;
@@ -642,17 +635,5 @@ section:first-of-type .scroll-indicator {
   
   .rsvp-form {
     gap: 0.6rem;
-  }
-}
-
-/* Disable snap scrolling on short screens */
-@media screen and (max-height: 600px) {
-  .snap-container {
-    scroll-snap-type: none;
-  }
-  
-  section {
-    min-height: auto;
-    padding-bottom: 2rem;
   }
 }

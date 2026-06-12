@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ﺳﻤﻴﺮ & دﻳﺎﻧﺎ </title>
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&amp;family=Playfair+Display&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Allura&amp;display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Allura&amp;family=Playfair+Display:wght@400;500&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
@@ -38,6 +38,9 @@
       pointer-events: none;
     }
 
+    /* Audio fallback prompt */
+
+
   </style>
 </head>
 <script>
@@ -45,58 +48,124 @@
     // Try to maintain audio continuity when coming from index page
     const audio = document.getElementById('wedding-audio');
     const startSecond = 45;
+    let audioCtx = null;
+    let hasSeeked = false;
+
+    function showAudioFallback() {}
+    function hideAudioFallback() {}
+
+    function seekToStart() {
+      if (!audio || hasSeeked) return;
+      if (!isNaN(audio.duration) && audio.duration > startSecond) {
+        try {
+          audio.currentTime = startSecond;
+          hasSeeked = true;
+        } catch (e) {
+          // ignore if seeking is not yet allowed
+        }
+      }
+    }
 
     function startMusic() {
       try {
+        if (!audio) return Promise.reject(new Error('No audio element'));
         audio.volume = 0.5;
-        if (!isNaN(audio.duration) && audio.duration > startSecond) {
-          audio.currentTime = startSecond;
+
+        // Seek only once, and only when metadata is available.
+        if (!hasSeeked && audio.readyState >= 1) {
+          seekToStart();
         }
+
+        if (!hasSeeked) {
+          audio.addEventListener('loadedmetadata', seekToStart, { once: true });
+        }
+
+        // resume/create AudioContext if available (helps some mobile browsers)
+        try {
+          const Ctx = window.AudioContext || window.webkitAudioContext;
+          if (Ctx) {
+            audioCtx = audioCtx || new Ctx();
+            if (audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
+            // connect the media element to the context if not connected
+            if (!audio._connectedToAudioCtx) {
+              try {
+                const src = audioCtx.createMediaElementSource(audio);
+                src.connect(audioCtx.destination);
+                audio._connectedToAudioCtx = true;
+              } catch (e) {
+                // ignore: creating media element source might throw if already used
+              }
+            }
+          }
+        } catch (e) {
+        }
+
         const playPromise = audio.play();
         if (playPromise && typeof playPromise.then === 'function') {
-          playPromise.catch(error => {
-            console.log('Autoplay prevented:', error);
+          playPromise.then(() => {
+          }).catch(() => {
           });
         }
+        return playPromise;
       } catch (e) {
-        console.log('Audio start error:', e);
+        showAudioFallback();
+        return Promise.reject(e);
       }
     }
+
+    // Expose to global so other scripts can call these handlers
+    try { window.startMusic = startMusic; window.showAudioFallback = showAudioFallback; window.hideAudioFallback = hideAudioFallback; } catch (e) {}
 
     function handleFirstInteraction() {
       startMusic();
       document.removeEventListener('click', handleFirstInteraction);
       document.removeEventListener('touchstart', handleFirstInteraction);
       document.removeEventListener('touchmove', handleFirstInteraction);
+      document.removeEventListener('touchend', handleFirstInteraction);
       document.removeEventListener('pointerdown', handleFirstInteraction);
       document.removeEventListener('pointermove', handleFirstInteraction);
+      document.removeEventListener('pointerup', handleFirstInteraction);
       document.removeEventListener('mousedown', handleFirstInteraction);
       document.removeEventListener('mousemove', handleFirstInteraction);
+      document.removeEventListener('mouseup', handleFirstInteraction);
+      document.removeEventListener('wheel', handleFirstInteraction);
+      document.removeEventListener('keydown', handleFirstInteraction);
     }
 
+    // Register all interaction handlers (ensure one fires on any user interaction)
     document.addEventListener('click', handleFirstInteraction, { once: true, passive: true });
-    document.addEventListener('touchstart', handleFirstInteraction, { once: true, passive: true });
+    document.addEventListener('touchstart', handleFirstInteraction, { once: true, passive: false });
     document.addEventListener('touchmove', handleFirstInteraction, { once: true, passive: true });
-    document.addEventListener('pointerdown', handleFirstInteraction, { once: true, passive: true });
+    document.addEventListener('touchend', handleFirstInteraction, { once: true, passive: true });
+    document.addEventListener('pointerdown', handleFirstInteraction, { once: true, passive: false });
     document.addEventListener('pointermove', handleFirstInteraction, { once: true, passive: true });
+    document.addEventListener('pointerup', handleFirstInteraction, { once: true, passive: true });
     document.addEventListener('mousedown', handleFirstInteraction, { once: true, passive: true });
     document.addEventListener('mousemove', handleFirstInteraction, { once: true, passive: true });
+    document.addEventListener('mouseup', handleFirstInteraction, { once: true, passive: true });
+    document.addEventListener('wheel', handleFirstInteraction, { once: true, passive: true });
+    document.addEventListener('keydown', handleFirstInteraction, { once: true, passive: true });
 
     if (audio) {
-      if (audio.readyState >= 1 && !isNaN(audio.duration)) {
+      // Aggressive autoplay attempts
+      const tryAutoplay = () => {
         startMusic();
-      } else {
-        const onLoaded = () => {
-          startMusic();
-          audio.removeEventListener('loadedmetadata', onLoaded);
-        };
-        audio.addEventListener('loadedmetadata', onLoaded);
-        const onCanPlay = () => {
-          startMusic();
-          audio.removeEventListener('canplay', onCanPlay);
-        };
-        audio.addEventListener('canplay', onCanPlay);
-      }
+      };
+      
+      // Try immediately (in case it's already ready)
+      tryAutoplay();
+      
+      // Try on metadata load
+      audio.addEventListener('loadedmetadata', tryAutoplay, { once: true });
+      
+      // Try on canplay
+      audio.addEventListener('canplay', tryAutoplay, { once: true });
+      
+      // Try on loadstart
+      audio.addEventListener('loadstart', tryAutoplay, { once: true });
+      
+      // Fallback: try after 500ms
+      setTimeout(tryAutoplay, 500);
     }
   });
 </script>
@@ -209,6 +278,35 @@
 
     updateActiveSection(activeIndex);
     container.addEventListener('scroll', onScroll, { passive: true });
+
+    // Ensure music starts reliably on slide/scroll gestures (mobile-friendly)
+    let musicStarted = false;
+    function tryStartMusicOnce(force) {
+      if (!musicStarted || force) {
+        musicStarted = true;
+        startMusic();
+      }
+    }
+
+    // Debounced scroll-end detection: fire shortly after scrolling stops
+    let scrollEndTimer = null;
+    function handleScrollForMusic() {
+      if (scrollEndTimer) clearTimeout(scrollEndTimer);
+      scrollEndTimer = setTimeout(() => {
+        tryStartMusicOnce(true); // Force replay even if musicStarted is true
+        scrollEndTimer = null;
+      }, 100);
+    }
+    container.addEventListener('scroll', handleScrollForMusic, { passive: true });
+
+    // Immediate triggers on any container interaction
+    container.addEventListener('pointerup', () => tryStartMusicOnce(true), { passive: true });
+    container.addEventListener('touchend', () => tryStartMusicOnce(true), { passive: true });
+    container.addEventListener('mouseup', () => tryStartMusicOnce(true), { passive: true });
+
+
+
+    
 
     const whatsappNumbers = {
       samir: '96103433668',
