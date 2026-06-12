@@ -43,11 +43,40 @@
   document.addEventListener('DOMContentLoaded', () => {
     // Try to maintain audio continuity when coming from index page
     const audio = document.getElementById('wedding-audio');
-    if (audio.paused) {
-      audio.volume = 0.5;
-      audio.play().catch(error => {
-        console.log("Autoplay prevented:", error);
-      });
+    // Start playback at 23 seconds when possible
+    function startAt23() {
+      try {
+        audio.volume = 0.5;
+        // only seek if duration is known and long enough
+        if (!isNaN(audio.duration) && audio.duration > 45) {
+          audio.currentTime = 45;
+        }
+        audio.play().catch(error => {
+          console.log('Autoplay prevented:', error);
+        });
+      } catch (e) {
+        console.log('Audio start error:', e);
+      }
+    }
+
+    if (audio) {
+      // If metadata is already loaded, start immediately
+      if (audio.readyState >= 1 && !isNaN(audio.duration)) {
+        startAt23();
+      } else {
+        // Wait for metadata so seeking is allowed
+        const onLoaded = () => {
+          startAt23();
+          audio.removeEventListener('loadedmetadata', onLoaded);
+        };
+        audio.addEventListener('loadedmetadata', onLoaded);
+        // Also try when canplay as a fallback
+        const onCanPlay = () => {
+          startAt23();
+          audio.removeEventListener('canplay', onCanPlay);
+        };
+        audio.addEventListener('canplay', onCanPlay);
+      }
     }
   });
 </script>
