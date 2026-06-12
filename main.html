@@ -76,7 +76,7 @@
     </p>
     <h2>"اﻟﻨَّﻌَﻢ اﻷﺑﺪﻳّﺔ"</h2>
     <h1>ﺳﻤﻴﺮ & دﻳﺎﻧﺎ</h1>
-    <p class="scroll-indicator">Scroll down to discover more</p>
+    <p class="scroll-indicator">Scroll right to discover more</p>
   </section>
 
   <!-- Hour and Location Section -->
@@ -106,25 +106,32 @@
       </a>
     </div>
     
-    <p class="scroll-indicator">Scroll down to see the the gift registry</p>
+    <p class="scroll-indicator">Scroll right to see the gift registry</p>
   </div>
 </section>
 
   <!-- Gift Registry Section -->
   <section>
+    <h2>حضوركم يزيد فرحتنا وصلاتكم تُثبّت حبّنا</h2>
     <h3>لمن يرغب، لائحة الهدايا</h3>
     <ul>
-      <div class="agenda-item"> <a href="#" target="_blank">Whish Money</a></div>
+      <div class="agenda-item"> <h4>Whish Money</h4></div>
       <div class="agenda-item">31428144</div>
     </ul>
     <div class="contact-container contact-in-gift">
-      <h3>حضوركم يزيد فرحتنا وصلاتكم تُثبّت حبّنا</h3>
       <p class="rsvp-note">يرجى تأكيد الحضور قبل 5 تموز</p>
-      <div class="phone-list">
-        <p><a class="map-button" href="https://wa.me/96103433668" target="_blank" rel="noopener noreferrer">03/سمير حداد 433668</a></p>
-        <p><a class="map-button" href="https://wa.me/96170277784" target="_blank" rel="noopener noreferrer">70/ديانا نصّار 277784</a></p>
-      </div>
-    </div>
+      <form id="rsvp-form" class="rsvp-form">
+        <label for="guest-name">الاسم</label>
+        <input id="guest-name" type="text" placeholder="الاسم (اختياري)" />
+
+        <label for="attendees">عدد الحضور</label>
+        <input id="attendees" type="number" min="1" value="1" />
+
+        <div class="rsvp-actions">
+          <a id="send-samir" class="map-button" target="_blank" rel="noopener noreferrer">03/سمير حداد 433668</a>
+          <a id="send-diana" class="map-button" target="_blank" rel="noopener noreferrer">70/ديانا نصّار 277784</a>
+        </div>
+      </form>
   </section>
   
   <script>
@@ -136,6 +143,53 @@
       index = (index + 1) % images.length;
       images[index].classList.add('active');
     }, 8000);
+
+    const container = document.querySelector('.snap-container');
+    const sections = Array.from(container.querySelectorAll('section'));
+    let activeIndex = 0;
+
+    function updateActiveSection(index) {
+      sections.forEach((section, i) => {
+        section.classList.toggle('active', i === index);
+      });
+    }
+
+    function onScroll() {
+      const newIndex = Math.round(container.scrollLeft / container.clientWidth);
+      if (newIndex !== activeIndex) {
+        activeIndex = newIndex;
+        updateActiveSection(activeIndex);
+      }
+    }
+
+    updateActiveSection(activeIndex);
+    container.addEventListener('scroll', onScroll, { passive: true });
+
+    const whatsappNumbers = {
+      samir: '96103433668',
+      diana: '96170277784'
+    };
+
+    const nameInput = document.getElementById('guest-name');
+    const attendeesInput = document.getElementById('attendees');
+    const sendSamir = document.getElementById('send-samir');
+    const sendDiana = document.getElementById('send-diana');
+
+    function buildWhatsAppLink(number, personName) {
+      const nameValue = nameInput.value.trim() || '---';
+      const attendeeValue = attendeesInput.value || '1';
+      const message = `مرحباً ${personName}،\nأرغب في تأكيد الحضور لزفاف سمير وديانا.\nالاسم: ${nameValue}\nعدد الحضور: ${attendeeValue}`;
+      return `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
+    }
+
+    function updateLinks() {
+      sendSamir.href = buildWhatsAppLink(whatsappNumbers.samir, 'سمير');
+      sendDiana.href = buildWhatsAppLink(whatsappNumbers.diana, 'ديانا');
+    }
+
+    attendeesInput.addEventListener('input', updateLinks);
+    nameInput.addEventListener('input', updateLinks);
+    updateLinks();
   </script>
 </body>
 
