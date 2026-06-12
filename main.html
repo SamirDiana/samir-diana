@@ -45,123 +45,31 @@
 </head>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    // Try to maintain audio continuity when coming from index page
     const audio = document.getElementById('wedding-audio');
-    let audioCtx = null;
-    let hasGesture = false;
-
-    function showAudioFallback() {}
-    function hideAudioFallback() {}
-
-    function createAudioContextIfAllowed() {
-      if (!audio || audioCtx || !hasGesture) return;
-      try {
-        const Ctx = window.AudioContext || window.webkitAudioContext;
-        if (!Ctx) return;
-        audioCtx = new Ctx();
-        if (audioCtx.state === 'suspended') {
-          audioCtx.resume().catch(() => {});
-        }
-        if (!audio._connectedToAudioCtx) {
-          try {
-            const src = audioCtx.createMediaElementSource(audio);
-            src.connect(audioCtx.destination);
-            audio._connectedToAudioCtx = true;
-          } catch (e) {
-            // ignore: creating media element source might throw if already used
-          }
-        }
-      } catch (e) {
-        // ignore context creation failures
-      }
-    }
-
-    function unlockAudio() {
+    
+    function startMusic() {
       if (!audio) return;
-      hasGesture = true;
-      audio.muted = false;
       audio.volume = 0.5;
-      createAudioContextIfAllowed();
       audio.play().catch(() => {});
     }
 
-    function startMusic() {
-      try {
-        if (!audio) return Promise.reject(new Error('No audio element'));
-        audio.volume = 0.5;
+    // Try to autoplay on load
+    startMusic();
 
-        if (hasGesture) {
-          createAudioContextIfAllowed();
-        }
-
-        const playPromise = audio.play();
-        if (playPromise && typeof playPromise.then === 'function') {
-          playPromise.then(() => {
-          }).catch(() => {
-          });
-        }
-        return playPromise;
-      } catch (e) {
-        showAudioFallback();
-        return Promise.reject(e);
-      }
-    }
-
-    // Expose to global so other scripts can call these handlers
-    try { window.startMusic = startMusic; window.showAudioFallback = showAudioFallback; window.hideAudioFallback = hideAudioFallback; } catch (e) {}
-
-    function handleFirstInteraction() {
-      unlockAudio();
+    // If autoplay fails, try on first user interaction
+    const handleFirstInteraction = () => {
       startMusic();
       document.removeEventListener('click', handleFirstInteraction);
       document.removeEventListener('touchstart', handleFirstInteraction);
-      document.removeEventListener('touchmove', handleFirstInteraction);
       document.removeEventListener('touchend', handleFirstInteraction);
-      document.removeEventListener('pointerdown', handleFirstInteraction);
-      document.removeEventListener('pointermove', handleFirstInteraction);
-      document.removeEventListener('pointerup', handleFirstInteraction);
-      document.removeEventListener('mousedown', handleFirstInteraction);
-      document.removeEventListener('mousemove', handleFirstInteraction);
-      document.removeEventListener('mouseup', handleFirstInteraction);
-      document.removeEventListener('wheel', handleFirstInteraction);
-      document.removeEventListener('keydown', handleFirstInteraction);
-    }
+    };
 
-    // Register all interaction handlers (ensure one fires on any user interaction)
-    document.addEventListener('click', handleFirstInteraction, { once: true, passive: true });
-    document.addEventListener('touchstart', handleFirstInteraction, { once: true, passive: false });
-    document.addEventListener('touchmove', handleFirstInteraction, { once: true, passive: true });
-    document.addEventListener('touchend', handleFirstInteraction, { once: true, passive: true });
-    document.addEventListener('pointerdown', handleFirstInteraction, { once: true, passive: false });
-    document.addEventListener('pointermove', handleFirstInteraction, { once: true, passive: true });
-    document.addEventListener('pointerup', handleFirstInteraction, { once: true, passive: true });
-    document.addEventListener('mousedown', handleFirstInteraction, { once: true, passive: true });
-    document.addEventListener('mousemove', handleFirstInteraction, { once: true, passive: true });
-    document.addEventListener('mouseup', handleFirstInteraction, { once: true, passive: true });
-    document.addEventListener('wheel', handleFirstInteraction, { once: true, passive: true });
-    document.addEventListener('keydown', handleFirstInteraction, { once: true, passive: true });
+    document.addEventListener('click', handleFirstInteraction, { once: true });
+    document.addEventListener('touchstart', handleFirstInteraction, { once: true });
+    document.addEventListener('touchend', handleFirstInteraction, { once: true });
 
-    if (audio) {
-      // Aggressive autoplay attempts
-      const tryAutoplay = () => {
-        startMusic();
-      };
-      
-      // Try immediately (in case it's already ready)
-      tryAutoplay();
-      
-      // Try on metadata load
-      audio.addEventListener('loadedmetadata', tryAutoplay, { once: true });
-      
-      // Try on canplay
-      audio.addEventListener('canplay', tryAutoplay, { once: true });
-      
-      // Try on loadstart
-      audio.addEventListener('loadstart', tryAutoplay, { once: true });
-      
-      // Fallback: try after 500ms
-      setTimeout(tryAutoplay, 500);
-    }
+    // Expose globally
+    window.startMusic = startMusic;
   });
 </script>
 <body>
