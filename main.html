@@ -90,6 +90,18 @@
       }
     }
 
+    function unlockAudio() {
+      if (!audio) return;
+      hasGesture = true;
+      audio.muted = false;
+      audio.volume = 0.5;
+      createAudioContextIfAllowed();
+      if (!hasSeeked) {
+        seekToStart();
+      }
+      audio.play().catch(() => {});
+    }
+
     function startMusic() {
       try {
         if (!audio) return Promise.reject(new Error('No audio element'));
@@ -125,8 +137,7 @@
     try { window.startMusic = startMusic; window.showAudioFallback = showAudioFallback; window.hideAudioFallback = hideAudioFallback; } catch (e) {}
 
     function handleFirstInteraction() {
-      hasGesture = true;
-      createAudioContextIfAllowed();
+      unlockAudio();
       startMusic();
       document.removeEventListener('click', handleFirstInteraction);
       document.removeEventListener('touchstart', handleFirstInteraction);
@@ -157,6 +168,7 @@
     document.addEventListener('keydown', handleFirstInteraction, { once: true, passive: true });
 
     if (audio) {
+      audio.muted = true;
       // Aggressive autoplay attempts
       const tryAutoplay = () => {
         startMusic();
@@ -189,7 +201,7 @@
   </div>
 
   <!-- Music -->
-  <audio id="wedding-audio" loop autoplay playsinline preload="auto">
+  <audio id="wedding-audio" loop autoplay muted playsinline preload="auto">
   <source src="calm-music.mp3" type="audio/mpeg" />
   Your browser does not support the audio element.
 </audio>
