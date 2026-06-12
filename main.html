@@ -50,6 +50,7 @@
     const startSecond = 45;
     let audioCtx = null;
     let hasSeeked = false;
+    let hasGesture = false;
 
     function showAudioFallback() {}
     function hideAudioFallback() {}
@@ -63,6 +64,29 @@
         } catch (e) {
           // ignore if seeking is not yet allowed
         }
+      }
+    }
+
+    function createAudioContextIfAllowed() {
+      if (!audio || audioCtx || !hasGesture) return;
+      try {
+        const Ctx = window.AudioContext || window.webkitAudioContext;
+        if (!Ctx) return;
+        audioCtx = new Ctx();
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume().catch(() => {});
+        }
+        if (!audio._connectedToAudioCtx) {
+          try {
+            const src = audioCtx.createMediaElementSource(audio);
+            src.connect(audioCtx.destination);
+            audio._connectedToAudioCtx = true;
+          } catch (e) {
+            // ignore: creating media element source might throw if already used
+          }
+        }
+      } catch (e) {
+        // ignore context creation failures
       }
     }
 
@@ -80,24 +104,8 @@
           audio.addEventListener('loadedmetadata', seekToStart, { once: true });
         }
 
-        // resume/create AudioContext if available (helps some mobile browsers)
-        try {
-          const Ctx = window.AudioContext || window.webkitAudioContext;
-          if (Ctx) {
-            audioCtx = audioCtx || new Ctx();
-            if (audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
-            // connect the media element to the context if not connected
-            if (!audio._connectedToAudioCtx) {
-              try {
-                const src = audioCtx.createMediaElementSource(audio);
-                src.connect(audioCtx.destination);
-                audio._connectedToAudioCtx = true;
-              } catch (e) {
-                // ignore: creating media element source might throw if already used
-              }
-            }
-          }
-        } catch (e) {
+        if (hasGesture) {
+          createAudioContextIfAllowed();
         }
 
         const playPromise = audio.play();
@@ -117,6 +125,8 @@
     try { window.startMusic = startMusic; window.showAudioFallback = showAudioFallback; window.hideAudioFallback = hideAudioFallback; } catch (e) {}
 
     function handleFirstInteraction() {
+      hasGesture = true;
+      createAudioContextIfAllowed();
       startMusic();
       document.removeEventListener('click', handleFirstInteraction);
       document.removeEventListener('touchstart', handleFirstInteraction);
