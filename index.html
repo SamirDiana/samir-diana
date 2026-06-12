@@ -116,10 +116,6 @@
       index = (index + 1) % images.length;
       images[index].classList.add('active');
     }, 8000);
-
-    function startSite() {
-      window.location.href = "main.html";
-    }
   </script>
 
   <!-- Add this right before the closing </body> tag in index.html -->
@@ -131,20 +127,18 @@
 <script>
   function startSite() {
     const audio = document.getElementById('wedding-audio');
-    audio.volume = 0.5;
-    if (!isNaN(audio.duration) && audio.duration > 45) {
+    if (audio) {
+      audio.volume = 0.5;
       try {
-        audio.currentTime = 45;
+        if (!isNaN(audio.duration) && audio.duration > 45) {
+          audio.currentTime = 45;
+        }
       } catch (e) {
         // ignore if seeking is not yet allowed
       }
+      audio.play().catch(() => {});
     }
-    audio.play().then(() => {
-      window.location.href = "main.html";
-    }).catch(error => {
-      console.log("Autoplay prevented:", error);
-      window.location.href = "main.html";
-    });
+    window.location.href = "main.html";
   }
 </script>
 </body>
