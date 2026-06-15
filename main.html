@@ -95,7 +95,7 @@
     </p>
     <h2>"اﻟﻨَّﻌَﻢ اﻷﺑﺪﻳّﺔ"</h2>
     <h1>ﺳﻤﻴﺮ & دﻳﺎﻧﺎ</h1>
-    <p class="scroll-indicator">Scroll right to discover more</p>
+    <p class="scroll-indicator">اسحب لليمين لاكتشاف المزيد</p>
   </section>
 
   <!-- Hour and Location Section -->
@@ -142,7 +142,7 @@
         <input id="guest-name" type="text" placeholder="الاسم (اختياري)" />
 
         <label for="attendees">عدد الحضور</label>
-        <input id="attendees" type="number" min="1" value="1" />
+        <input id="attendees" type="number" min="1" value="" />
 
         <div class="rsvp-actions">
           <a id="send-samir" class="map-button" href="https://wa.me/96103433668" target="_blank" rel="noopener noreferrer"> سمير حداد 03/433668</a>
@@ -236,6 +236,36 @@
     attendeesInput.addEventListener('input', updateLinks);
     nameInput.addEventListener('input', updateLinks);
     updateLinks();
+    
+    // end of main script
+  </script>
+
+  <!-- Swipe hint (right) -->
+  <div class="swipe-hint" id="swipeHint" aria-hidden="true">
+    <span class="swipe-arrow" aria-hidden="true">
+      <span class="chev">›</span>
+      <span class="chev">›</span>
+      <span class="chev">›</span>
+    </span>
+  </div>
+
+  <script>
+    (function(){
+      const swipeHint = document.getElementById('swipeHint');
+      const container = document.querySelector('.snap-container');
+      if (!swipeHint || !container) return;
+
+      function hideHint() {
+        swipeHint.classList.add('hidden');
+      }
+
+      // Hide after first scroll or first pointer down (touch/click)
+      container.addEventListener('scroll', hideHint, { once: true, passive: true });
+      document.addEventListener('pointerdown', hideHint, { once: true, passive: true });
+
+      // Also hide after a short timeout in case user doesn't interact
+      setTimeout(hideHint, 7000);
+    })();
   </script>
 </body>
 

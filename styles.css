@@ -399,7 +399,7 @@ a:hover {
   bottom: calc(1.5rem + env(safe-area-inset-bottom));
   left: 50%;
   transform: translateX(-50%);
-  font-size: 0.9rem;
+  font-size: 1.2rem;
   opacity: 0.7;
   animation: pulse 2s infinite;
   padding-bottom: env(safe-area-inset-bottom);
@@ -636,4 +636,69 @@ section:first-of-type .scroll-indicator {
   .rsvp-form {
     gap: 0.6rem;
   }
+}
+
+/* ========== SWIPE HINT (right-side) ========== */
+.swipe-hint {
+  position: fixed;
+  right: 16px;
+  bottom: calc(1.5rem + env(safe-area-inset-bottom));
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.06);
+  border-radius: 999px;
+  z-index: 60;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  pointer-events: none; /* don't block taps */
+  transition: opacity 0.45s ease, transform 0.45s ease;
+  opacity: 1;
+}
+
+.swipe-hint.hidden {
+  opacity: 0;
+  transform: translateX(12px) scale(0.98);
+}
+
+.swipe-arrow {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 22px;
+}
+
+.swipe-arrow .chev {
+  display: inline-block;
+  color: #fff;
+  opacity: 0.7;
+  transform-origin: center;
+  animation: swipeTrail 1s cubic-bezier(.2,.9,.3,1) infinite;
+}
+
+.swipe-arrow .chev:nth-child(1) { animation-delay: 0s; }
+.swipe-arrow .chev:nth-child(2) { animation-delay: 0.12s; }
+.swipe-arrow .chev:nth-child(3) { animation-delay: 0.24s; }
+
+@keyframes swipeTrail {
+  0% { transform: translateX(0); opacity: 0.6 }
+  40% { transform: translateX(10px); opacity: 1 }
+  100% { transform: translateX(0); opacity: 0.6 }
+}
+
+/* Tweak swipe hint sizing for large screens and hide center indicator there */
+@media screen and (min-width: 1024px) {
+  .swipe-hint { right: 28px; width: 72px; height: 72px; }
+  .swipe-arrow { font-size: 24px; gap: 8px; }
+  .swipe-arrow .chev { animation-duration: 1.1s; }
+}
+
+/* Hide the centered scroll-indicator on wider screens to avoid duplication */
+@media screen and (min-width: 768px) {
+  /* Keep center indicator visible on larger screens but reduce overlap with swipe-hint */
+  section:first-of-type .scroll-indicator { display: block !important; font-size: 1rem; opacity: 0.85; }
+  .swipe-hint { right: 28px; }
 }
